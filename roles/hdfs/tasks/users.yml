@@ -1,0 +1,18 @@
+---
+
+- name: HDFS USER | Manage group
+  group:
+    name: "{{ hdfs_group }}"
+    state: present
+    system: yes
+
+- name: HDFS USER | Manage user
+  user:
+    name: "{{ hdfs_user }}"
+    comment: "Hadoop hdfs admin user"
+    group: "{{ hdfs_group }}"
+    shell: /bin/bash
+    state: present
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa

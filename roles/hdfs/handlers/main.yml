@@ -1,0 +1,27 @@
+---
+
+- name: Restart hdfs
+  systemd:
+    name: hdfs
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: inventory_hostname in groups['hdfs_master'][0]
+
+- name: Restart yarn
+  systemd:
+    name: yarn
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+  when: inventory_hostname in groups['hdfs_master'][0]
+
+- name: Refresh dfs nodes
+  shell: "{{ hadoop_home }}/bin/hdfs dfsadmin -refreshNodes"
+  when: inventory_hostname in groups['hdfs_master'][0]
+  ignore_errors: yes
+
+- name: Refresh yarn nodes
+  shell: "{{ hadoop_home }}/bin/yarn rmadmin -refreshNodes"
+  when: inventory_hostname in groups['hdfs_master'][0]
+  ignore_errors: yes

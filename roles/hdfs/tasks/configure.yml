@@ -1,0 +1,79 @@
+---
+
+- name: HDFS CONFIGURE | Manage directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    mode: 0755
+  with_items:
+    - "{{ hdfs_namenode_dir }}"
+    - "{{ hdfs_datanode_dir }}"
+
+- name: HDFS CONFIGURE | Configure path environment
+  template:
+    src: etc/profile.d/hadoop.sh.j2
+    dest: /etc/profile.d/hadoop.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: HDFS CONFIGURE | Configure Hadoop/Yarn environment
+  template:
+    src: usr/local/hadoop/etc/hadoop/{{ item }}-env.sh.j2
+    dest: "{{ hadoop_home }}/etc/hadoop/{{ item }}-env.sh"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    mode: 0644
+  with_items:
+    - hadoop
+    - yarn
+  notify: Restart hdfs
+
+- name: HDFS CONFIGURE | Manage Hadoop/Yarn environment symlink
+  file:
+    state: link
+    src: "{{ hadoop_home }}/etc/hadoop/{{ item }}-env.sh"
+    dest: /etc/profile.d/{{ item }}-env.sh
+    owner: root
+    group: root
+  with_items:
+    - hadoop
+    - yarn
+  notify: Restart hdfs
+
+- name: HDFS CONFIGURE | Configure Core/HDFS/MapReduce/Yarn Site
+  template:
+    src: usr/local/hadoop/etc/hadoop/{{ item }}-site.xml.j2
+    dest: "{{ hadoop_home }}/etc/hadoop/{{ item }}-site.xml"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    mode: 0644
+  with_items:
+    - core
+    - hdfs
+    - mapred
+    - yarn
+  notify: Restart hdfs
+
+- name: HDFS CONFIGURE | Configure workers
+  template:
+    src: usr/local/hadoop/etc/hadoop/workers.j2
+    dest: "{{ hadoop_home }}/etc/hadoop/workers"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    mode: 0644
+  notify:
+    - Restart hdfs
+    - Refresh dfs nodes
+    - Refresh yarn nodes
+
+- name: HDFS CONFIGURE | Format NameNode
+  become: yes
+  become_user: "{{ hdfs_user }}"
+  shell: bin/hdfs namenode -format
+  args:
+    chdir: "{{ hadoop_home }}"
+    creates: "{{ hdfs_namenode_dir }}/current/VERSION"
+  when: inventory_hostname in groups['hdfs_master']

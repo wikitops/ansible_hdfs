@@ -1,0 +1,28 @@
+---
+
+- name: HDFS INSTALL | Unarchive sources (This may take some times)
+  unarchive:
+    src: "{{ hdfs_sources_url }}"
+    dest: "{{ hdfs_sources_path }}"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    remote_src: yes
+    creates: "{{ hdfs_sources_path }}/hadoop-{{ hdfs_version }}"
+
+- name: HDFS INSTALL | Manage symlink
+  file:
+    state: link
+    src: "{{ hdfs_sources_path }}/hadoop-{{ hdfs_version }}"
+    dest: "{{ hadoop_home }}"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+
+- name: HDFS INSTALL | Manage directory
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    mode: 0755
+  with_items:
+    - "{{ hdfs_log_dir }}"

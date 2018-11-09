@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Hadoop DFS namenode and datanode
+After=syslog.target network.target remote-fs.target nss-lookup.target network-online.target
+Requires=network-online.target
+
+[Service]
+User={{ hdfs_user }}
+Group={{ hdfs_group }}
+Type=forking
+ExecStart={{ hadoop_home }}/sbin/start-dfs.sh
+ExecStop={{ hadoop_home }}/sbin/stop-dfs.sh
+WorkingDirectory=/home/hadoop/
+Environment=JAVA_HOME={{ java_home }}
+Environment=HADOOP_HOME={{ hadoop_home }}
+Restart=on-failure
+TimeoutStartSec=2min
+PIDFile=/tmp/hadoop-hadoop-namenode.pid
+
+[Install]
+WantedBy=multi-user.target

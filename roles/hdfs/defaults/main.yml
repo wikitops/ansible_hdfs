@@ -1,0 +1,45 @@
+---
+
+###
+# HADOOP HDFS
+###
+
+# Version
+hdfs_version: 3.1.1
+
+# Sources:
+hdfs_sources_url: https://archive.apache.org/dist/hadoop/common/hadoop-{{ hdfs_version }}/hadoop-{{ hdfs_version }}.tar.gz
+hdfs_sources_path: /usr/local
+hadoop_home: "{{ hdfs_sources_path }}/hadoop"
+
+# User
+hdfs_user: hadoop
+hdfs_group: hadoop
+
+# Configuration
+
+# DNS name of the master group
+hdfs_master_dns_name: "hdfs-master-{{ groups['hdfs_master'][0] }}.{{ hdfs_dns_zone }}"
+
+# Core site
+hdfs_core_site:
+  - name: fs.default.name
+    value: hdfs://{{ hdfs_master_dns_name }}:9000
+
+# Environment
+hdfs_optional_tools: "" # Example: "hadoop-azure-datalake,hadoop-azure,hadoop-openstack,hadoop-kafka,hadoop-aws,hadoop-aliyun"
+
+# Logs
+hdfs_log_dir: /var/log/hdfs # Or : ${HADOOP_HOME}/logs
+
+# HDFS directories
+hdfs_namenode_dir: "{{ hadoop_home }}/data/namenode"
+hdfs_datanode_dir: "{{ hadoop_home }}/data/datanode"
+
+###
+# JAVA JVM
+###
+
+# Heap memory
+hdfs_jvm_heapsize_min: 1G
+hdfs_jvm_heapsize_max: 1G

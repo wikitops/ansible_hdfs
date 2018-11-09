@@ -1,0 +1,24 @@
+---
+
+- name: HDFS | Manage user
+  import_tasks: users.yml
+
+- name: HDFS | Manage ssh keys
+  import_tasks: ssh.yml
+  tags: update-hdfs-ssh
+
+- name: HDFS | Manage hosts file
+  import_tasks: hosts.yml
+  tags: update-hdfs-hosts
+
+- name: HDFS | Manage installation
+  import_tasks: install.yml
+  tags: update-hdfs-install
+
+- name: HDFS | Manage configuration
+  import_tasks: configure.yml
+  tags: update-hdfs-config
+
+- name: HDFS | Manage service
+  import_tasks: systemd.yml
+  tags: update-hdfs-systemd

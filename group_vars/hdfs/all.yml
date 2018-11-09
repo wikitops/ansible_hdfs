@@ -1,0 +1,8 @@
+---
+
+###
+# HADOOP HDFS
+###
+
+# Global Domaie Name (DNS)
+default_dns_domain: wikitops.local

@@ -1,0 +1,13 @@
+---
+
+- name: HDFS SYSTEMD | Template script
+  template:
+    src: lib/systemd/system/{{ item }}.service.j2
+    dest: /lib/systemd/system/{{ item }}.service
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - hdfs
+    - yarn
+  notify: Restart hdfs

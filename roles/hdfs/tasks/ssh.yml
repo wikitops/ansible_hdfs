@@ -1,0 +1,14 @@
+---
+
+- name: HDFS SSH | Fetch all public ssh keys
+  shell: cat /home/{{ hdfs_user }}/.ssh/id_rsa.pub
+  register: ssh_keys
+
+- name: HDFS SSH | Deploy keys on all slave servers
+  authorized_key:
+    user: "{{ hdfs_user }}"
+    key: "{{ item[0] }}"
+  delegate_to: "{{ item[1] }}"
+  with_nested:
+    - "{{ ssh_keys.stdout }}"
+    - "{{ groups['hdfs'] }}"
