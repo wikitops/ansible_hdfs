@@ -27,14 +27,6 @@ Be aware that you need to be in the Vagrant directory to be able to run the comm
 
 #### Deployment
 
-This playbook has some dependencies to other roles that must be downloaded before executing the playbook :
-
-```bash
-$ ansible-galaxy install -r requirements.yml
-```
-
-This command should download the Java role from Wikitops Github account to the local role path.
-
 To deploy the Hadoop HDFS cluster on Vagrant instances, just run this command :
 
 ```bash
